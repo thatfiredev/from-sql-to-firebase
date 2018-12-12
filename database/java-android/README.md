@@ -21,6 +21,7 @@ On the Realtime Database, each object needs to be stored under a key. This
  key should identify the object uniquely in the database.
  You can think of this key as the Primary Key on a SQL Table.
  If you already know the key beforehand, you can use:
+ 
 **SQL:**
 ```sql
 INSERT INTO users (id, fullname, email, age, city) VALUES (2, 'Joana', 'joana@email.com', 21, 'Maputo');
@@ -34,6 +35,7 @@ usersRef.child(key).setValue(newUser);
 ```
 
 Or if you want this key to be automatically generated:
+
 **SQL:**
 
 (Assuming you've enabled auto-increment in that table)
@@ -47,17 +49,18 @@ User newUser = new User(2, "Joana", "joana@email.com", 21, "Maputo");
 String key = usersRef.push().getKey();
 usersRef.child(key).setValue(newUser);
 ```
-Note that this generates a random Key (like "-JhQ76OEK_848CkIFhAq" for example). Learn about how these keys are
+Note that this generates a random key (like "-JhQ76OEK_848CkIFhAq" for example). Learn about how these keys are
  generated [here](https://firebase.googleblog.com/2015/02/the-2120-ways-to-ensure-unique_68.html).
 
 ## Read
 In order to read data, Firebase makes use of Listeners. Check the
  [Firebase Documentation](https://firebase.google.com/docs/database/android/read-and-write#listen_for_value_events)
- to know more about it. Some examples in this guide might omit the listener.
+ to know more about it. Please note that some examples in this guide might omit the listener.
 
 ### Read all users
 Please note that this is **not recommended**, because if this node contains a large number of users,
  it might use a lot of bandwidth, memory and battery.
+ 
 **SQL:**
 ```sql
 SELECT * FROM users;
@@ -92,6 +95,7 @@ SELECT * FROM users WHERE id = 2;
 ```
 
 **Firebase:**
+
 If you know the user's key, you can call use the `child()` method:
 ```java
 usersRef.child("-JhQ76OEK_848CkIFhAq").addValueEventListener(new ValueEventListener() {
@@ -124,6 +128,7 @@ usersRef.child("-JhQ76OEK_848CkIFhAq").addValueEventListener(new ValueEventListe
 
 ## Update
 Changing the user's name from "Joana" to "John":
+
 **SQL:**
 ```sql
 UPDATE TABLE users SET fullname = 'John' WHERE id = 2;
