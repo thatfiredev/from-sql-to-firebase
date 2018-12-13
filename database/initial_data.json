@@ -1,0 +1,70 @@
+{
+  "users": {
+    "john": {
+      "fullName": "John Doe",
+      "email": "johndoe@email.com",
+      "age": 21,
+      "city": "Gaborone"
+    },
+    "maria": {
+      "fullName": "Maria Sitoe",
+      "email": "mariasitoe@email.com",
+      "age": 17,
+      "city": "Tokyo"
+    },
+    "peter": {
+      "fullName": "Peter Skywalker",
+      "email": "peter@email.com",
+      "age": 36,
+      "city": "Lisbon"
+    },
+    "luke": {
+      "fullName": "Luke Quill",
+      "email": "luke@email.com",
+      "age": 16,
+      "city": "New Delhi"
+    },
+    "paty": {
+      "fullName": "Patricia Rodriguez",
+      "email": "patricia@email.com",
+      "age": 48,
+      "city": "San Francisco"
+    }
+  },
+  "groupChats": {
+    "java": {
+      "groupName": "Java Developers",
+      "description": "For those interested in learning Java SE or EE"
+    },
+    "python": {
+      "groupName": "Pythonists only",
+      "description": "All Things Python"
+    },
+    "js": {
+      "groupName": "JavaScript all the way",
+      "description": "JavaScript 101"
+    },
+    "swift": {
+      "groupName": "Home Swift Home",
+      "description": "Let's get swifty in here"
+    }
+  },
+  "participants": {
+    "java": {
+      "john": "John Doe",
+      "maria": "Maria Sitoe"
+    },
+    "js": {
+      "paty": "Patricia Rodriguez",
+      "luke": "Luke Quill",
+      "peter": "Peter Skywalker"
+    },
+    "swift": {
+      "john": "John Doe",
+      "peter": "Peter Skywalker"
+    },
+    "python": {
+      "luke": "Luke Quill"
+    }
+  }
+}
