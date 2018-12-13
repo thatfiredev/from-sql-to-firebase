@@ -9,7 +9,7 @@
 ## Additional classes and pre-defined variables
 Other than the example from [README.md](/README.md) and the [initial data](../initial_data.json), we'll also use the following classes:
 - [User](User.kt)
-- [GroupChat](GroupChat.kotlin)
+- [GroupChat](GroupChat.kt)
 
 And the following variables:
 ```kotlin
@@ -89,7 +89,7 @@ usersRef.addValueEventListener(object : ValueEventListener {
         // We can then iterate through it to get each one of them
         // and maybe add them to a Collection like List or ArrayList
         for (snap in dataSnapshot.getChildren()) {
-            val user = snap.getValue(User::class.kotlin);
+            val user = snap.getValue(User::class.java)
             // ...
         }
         
@@ -116,7 +116,7 @@ usersRef.child("-JhQ76OEK_848CkIFhAq").addValueEventListener(object : ValueEvent
     override fun onDataChange(dataSnapshot: DataSnapshot) {
         // Here, dataSnapshot contains only the user we have specified,
         // thus there's no need to iterate anything
-        val user = snap.getValue(User::class.kotlin)
+        val user = snap.getValue(User::class.java)
         
     }
     
@@ -288,7 +288,7 @@ So now we only need a single query:
 ```kotlin
 participantsRef.child("java").addValueEventListener(object : ValueEventListener {
     override fun onDataChange(dataSnapshot: DataSnapshot) {
-        for (snap : dataSnapshot.getChildren()) {
+        for (snap in dataSnapshot.getChildren()) {
             val user = snap.getValue(User::class.java)
             // TODO: Add the user data to the UI
         }
@@ -333,6 +333,76 @@ Or update the object and overwrite it:
 ```kotlin
 newUser.fullName = "John"
 usersRef.child(2).setValue(newUser)
+```
+
+### Updating multiple nodes simultaneously
+Since your Realtime Database may sometimes require data duplication, you might need to update
+ more than a single node when updating a single field. This could be done using Lookups and
+ [Multi-Path Updates](https://firebase.google.com/docs/database/android/read-and-write#update_specific_fields).
+
+**Lookups:**
+
+Lookups are a special node you can create on your database to make it simple to identify what groups each user
+ is participating in. This method saves boolean values to reduce bandwidth and storage usage. For example, if we
+ need to update a user's full name in all the groups they belong to, we'd create the lookup:
+```json
+"user_groups": {
+  "peter": {
+    "js": true,
+    "swift": true
+  },
+  "luke": {
+    "js": true,
+    "python": true
+  }
+}
+``` 
+So in order to update the full name of the user "luke" to "Luke Alexander", you'd use:
+```kotlin
+rootRef.child("user_groups").child("luke").addValueEventListener(object : ValueEventListener {
+    override fun onDataChange(dataSnapshot: DataSnapshot) {
+        for (snap in dataSnapshot.getChildren()) {
+            val groupKey = snap.key
+            
+            participantsRef.child(groupKey).child("luke").setValue("Luke Alexander")
+        }
+        
+    }
+    
+    override fun onCancelled(databaseError: DatabaseError) {
+        // Getting User Groups failed, log a message
+        Log.w(TAG, databaseError.toException())
+    }
+})
+```
+Although this might work just fine for small databases, if the user participates in too many groups, the update process
+ might take a few seconds. And if our users closes the app during the process, we might end-up with incomplete/corrupted
+ data because of an update operation that never finished. That's when multi-path updates come in.
+
+**Multi-path update:**
+
+Multi-path updates are atomic operations. This means that it's all or nothing: either all nodes get updated or none of
+ don't run the update at all.
+ 
+Let's update the full name of the user "luke" to "Luke Alexander", but this time using multi-path updates:
+```kotlin
+val updates = HashMap<String, Any>()
+updates["/users/luke/fullName"] = "Luke Alexander"
+
+rootRef.child("user_groups").child("luke").addValueEventListener(object : ValueEventListener {
+    override fun onDataChange(dataSnapshot: DataSnapshot) {
+        for (snap in dataSnapshot.getChildren()) {
+            val groupKey = snap.key
+            updates["/participants/$groupKey/luke"] = "Luke Alexander"
+        }
+        rootRef.updateChildren(updates)
+    }
+    
+    override fun onCancelled(databaseError: DatabaseError) {
+        // Getting User Groups failed, log a message
+        Log.w(TAG, databaseError.toException())
+    }
+})
 ```
 
 ## Delete

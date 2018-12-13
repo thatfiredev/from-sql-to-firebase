@@ -28,12 +28,12 @@ On the Realtime Database, each object needs to be stored under a key. This
  
 **SQL:**
 ```sql
-INSERT INTO users (id, fullname, email, age, city) VALUES (2, 'Joana', 'joana@email.com', 21, 'Maputo');
+INSERT INTO users (id, fullName, email, age, city) VALUES (2, 'Joana Ahing', 'joana@email.com', 21, 'Maputo');
 ```
 
 **Firebase:**
 ```java
-User newUser = new User(2, "Joana", "joana@email.com", 21, "Maputo");
+User newUser = new User(2, "Joana Ahing", "joana@email.com", 21, "Maputo");
 String key = "2";
 usersRef.child(key).setValue(newUser);
 ```
@@ -44,12 +44,12 @@ Or if you want this key to be automatically generated:
 
 (Assuming you've enabled auto-increment in that table)
 ```sql
-INSERT INTO User (name, email, age, city) VALUES ('Joana', 'joana@email.com', 21, 'Maputo');
+INSERT INTO User (fullName, email, age, city) VALUES ('Joana Ahing', 'joana@email.com', 21, 'Maputo');
 ```
 
 **Firebase:**
 ```java
-User newUser = new User(2, "Joana", "joana@email.com", 21, "Maputo");
+User newUser = new User(2, "Joana Ahing", "joana@email.com", 21, "Maputo");
 String key = usersRef.push().getKey();
 usersRef.child(key).setValue(newUser);
 ```
@@ -117,7 +117,7 @@ If you know the user's key, you can call use the `child()` method:
 usersRef.child("-JhQ76OEK_848CkIFhAq").addValueEventListener(new ValueEventListener() {
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
-        // Here, dataSnapshot contains only the user we have specified,
+        // Here, dataSnapshot contains only the user you have specified,
         // thus there's no need to iterate anything
         User user = snap.getValue(User.class);
         
@@ -201,7 +201,7 @@ After seeing the previous queries, you might think this can be done by putting
  
  As a workaround, you can add a new attribute to the database (and a new property to the `User` class),
  let's say `age_city`. Then it's value would be composed by "[age]_[city]" (e.g. "19_Maputo" or "30_Beira").
- So than we can run the query:
+ So than you can run the query:
 ```java
 usersRef.orderByChild("age_city").equalTo("21_Maputo");
 ``` 
@@ -219,7 +219,7 @@ WHERE g.groupId = "java";
 ```
 **Firebase:**
 
-`JOIN` operations are not supported in the Realtime Database. As a workaround, we can
+`JOIN` operations are not supported in the Realtime Database. As a workaround, you can
  place a second query inside the listener of the first query.
 ```java
 participantsRef.child("java").addValueEventListener(new ValueEventListener() {
@@ -228,7 +228,7 @@ participantsRef.child("java").addValueEventListener(new ValueEventListener() {
         for (DataSnapshot snap : dataSnapshot.getChildren()) {
             // We stored the user's key as a participant's key 
             String userKey = snap.getKey();
-            // The value we stored under that key was the user's name
+            // The value stored under that key was the user's name
             // So, if you only need their name, you can stop in following line:
             String userName = snap.child(userKey).getValue(String.class);
             
@@ -292,7 +292,7 @@ We'd have:
     }
 }
 ```
-So now we only need a single query:
+So now you only need a single query:
 ```java
 participantsRef.child("java").addValueEventListener(new ValueEventListener() {
     @Override
@@ -344,6 +344,80 @@ Or update the object and overwrite it:
 ```java
 newUser.setFullname("John");
 usersRef.child(2).setValue(newUser);
+```
+
+### Updating multiple nodes simultaneously
+Since your Realtime Database may sometimes require data duplication, you might need to update
+ more than a single node when updating a single field. This could be done using Lookups and
+ [Multi-Path Updates](https://firebase.google.com/docs/database/android/read-and-write#update_specific_fields).
+
+**Lookups:**
+
+Lookups are a special node you can create on your database to make it simple to identify what groups each user
+ is participating in. This method saves boolean values to reduce bandwidth and storage usage. For example, if we
+ need to update a user's full name in all the groups they belong to, we'd create the lookup:
+```json
+"user_groups": {
+  "peter": {
+    "js": true,
+    "swift": true
+  },
+  "luke": {
+    "js": true,
+    "python": true
+  }
+}
+``` 
+So in order to update the full name of the user "luke" to "Luke Alexander", you'd use:
+```java
+rootRef.child("user_groups").child("luke").addValueEventListener(new ValueEventListener() {
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+            String groupKey = snap.getKey();
+            
+            participantsRef.child(groupKey).child("luke").setValue("Luke Alexander");
+        }
+        
+    }
+    
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        // Getting User Groups failed, log a message
+        Log.w(TAG, databaseError.toException());
+    }
+});
+```
+Although this might work just fine for small databases, if the user participates in too many groups, the update process
+ might take a few seconds. And if our users closes the app during the process, we might end-up with incomplete/corrupted
+ data because of an update operation that never finished. That's when multi-path updates come in.
+
+**Multi-path update:**
+
+Multi-path updates are atomic operations. This means that it's all or nothing: either all nodes get updated or none of
+ don't run the update at all.
+ 
+Let's update the full name of the user "luke" to "Luke Alexander", but this time using multi-path updates:
+```java
+Map<String, Object> updates = new HashMap<>();
+updates.put("/users/luke/fullName", "Luke Alexander");
+
+rootRef.child("user_groups").child("luke").addValueEventListener(new ValueEventListener() {
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+            String groupKey = snap.getKey();
+            updates.put("/participants/" + groupKey + "/luke", "Luke Alexander");
+        }
+        rootRef.updateChildren(updates);
+    }
+    
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        // Getting User Groups failed, log a message
+        Log.w(TAG, databaseError.toException());
+    }
+});
 ```
 
 ## Delete
