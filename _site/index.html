@@ -1,0 +1,55 @@
+<h1 id="wip-from-sql-to-firebase">[WIP] From SQL to Firebase</h1>
+
+<p>Simple guide to help SQL developers understand how to use Firebase.
+This guide contains most SQL queries and it’s Firebase equivalent.</p>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li><a href="firestore/README.md">Cloud Firestore</a>
+    <ul>
+      <li><a href="firestore/java-android/README.md">Java (Android)</a></li>
+      <li><a href="firestore/kotlin-android/README.md">Kotlin (Android)</a></li>
+    </ul>
+  </li>
+  <li><a href="database/README.md">Realtime Database</a>
+    <ul>
+      <li><a href="database/java-android/README.md">Java (Android)</a></li>
+      <li><a href="database/kotlin-android/README.md">Kotlin (Android)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="our-example">Our Example</h2>
+<p>To help you understand Firebase, we’ll be using a SQL Database containing 3 tables: <code class="highlighter-rouge">Users</code>, <code class="highlighter-rouge">GroupChats</code> and
+ <code class="highlighter-rouge">Participants</code>.</p>
+
+<p>The <code class="highlighter-rouge">Users</code> table contains the users registered on our app. For each user, we’ll register their: id, full name, email,
+ age and city name.</p>
+
+<p>The <code class="highlighter-rouge">GroupChats</code> table contains a list of group chats created on the app. For each of them,
+ we’ll need to know their: id, name and short description.</p>
+
+<p>The <code class="highlighter-rouge">Participants</code> table establishes the relation between users and group chats. It should show what groups each user
+ participates in and which users are participating in each group. This table contains the attributes:
+ <code class="highlighter-rouge">userId</code> and <code class="highlighter-rouge">groupId</code>.</p>
+
+<h2 id="available-languages">Available Languages</h2>
+<ul>
+  <li><a href="README.md">English</a></li>
+  <li><a href="README-PT.md">Portuguese</a></li>
+</ul>
+
+<h2 id="contributing">Contributing</h2>
+<p>Contributions are welcome! Please read our <a href="CONTRIBUTING.md">guidelines</a> to know how to contribute.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>This project was inspired by and based on:</p>
+<ul>
+  <li><a href="">Firebase Database for SQL Developers</a> Youtube video series presented by <a href="https://github.com/davideast">David East</a>;</li>
+  <li><a href="https://medium.com/android-dev-moz/firebasesql-4ee3d26a3d15">Firebase Database para Desenvolvedores SQL</a> blog posts
+ by <a href="https://github.com/rosariopfernandes">Rosário P. Fernandes</a>;</li>
+  <li>Various answers from <a href="">#AskFirebase</a> and <a href="https://stackoverflow.com/tags/firebase/">StackOverflow</a>.</li>
+</ul>
+
+<h2 id="license">LICENSE</h2>
+<p>This project is licensed under the MIT License - see the <a href="LICENSE">license file</a> for details.</p>

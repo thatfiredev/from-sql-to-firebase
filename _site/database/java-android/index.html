@@ -1,0 +1,335 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Realtime Database Android (Java)</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="/assets/images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="/assets/images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/assets/images//touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="/assets/images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-red.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px;
+      margin-bottom: 40px;
+      z-index: 900;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+      <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">Realtime Database Android (Java)</span>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+              <i class="material-icons">search</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder">
+              <input class="mdl-textfield__input" type="text" id="search">
+              <label class="mdl-textfield__label" for="search">Enter your query...</label>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="demo-ribbon"></div>
+      <main class="demo-main mdl-layout__content">
+        <div class="demo-container mdl-grid">
+          <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+          <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+            <div class="demo-crumbs mdl-color-text--grey-500">
+              Google &gt; Material Design Lite &gt; How to install MDL
+            </div>
+		<h1 id="realtime-database-android-java">Realtime Database Android (Java)</h1>
+
+<h2 id="contents">Contents</h2>
+<ul>
+  <li><a href="#create">Create</a></li>
+  <li><a href="#read">Read</a></li>
+  <li><a href="#update">Update</a></li>
+  <li><a href="#delete">Delete</a></li>
+</ul>
+
+<h2 id="additional-classes-and-pre-defined-variables">Additional classes and pre-defined variables</h2>
+<p>Other than the example from <a href="/README.md">README.md</a>, we’ll also use the following classes:</p>
+<ul>
+  <li><a href="User.java">User</a></li>
+  <li><a href="GroupChat.java">GroupChat</a></li>
+</ul>
+
+<p>And the following variables:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DatabaseReference</span> <span class="n">rootRef</span> <span class="o">=</span> <span class="n">FirebaseDatabase</span><span class="o">.</span><span class="na">getInstance</span><span class="o">().</span><span class="na">getReference</span><span class="o">();</span>
+<span class="n">DatabaseReference</span> <span class="n">usersRef</span> <span class="o">=</span> <span class="n">rootRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="s">"users"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h2 id="create">Create</h2>
+<p>On the Realtime Database, each object needs to be stored under a key. This
+ key should identify the object uniquely in the database.
+ You can think of this key as the Primary Key on a SQL Table.
+ If you already know the key beforehand, you can use:</p>
+
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">city</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'Joana'</span><span class="p">,</span> <span class="s1">'joana@email.com'</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="s1">'Maputo'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">User</span> <span class="n">newUser</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">"Joana"</span><span class="o">,</span> <span class="s">"joana@email.com"</span><span class="o">,</span> <span class="mi">21</span><span class="o">,</span> <span class="s">"Maputo"</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">key</span> <span class="o">=</span> <span class="s">"2"</span><span class="o">;</span>
+<span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span><span class="n">newUser</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>Or if you want this key to be automatically generated:</p>
+
+<p><strong>SQL:</strong></p>
+
+<p>(Assuming you’ve enabled auto-increment in that table)</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">User</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">city</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">'Joana'</span><span class="p">,</span> <span class="s1">'joana@email.com'</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="s1">'Maputo'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">User</span> <span class="n">newUser</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">"Joana"</span><span class="o">,</span> <span class="s">"joana@email.com"</span><span class="o">,</span> <span class="mi">21</span><span class="o">,</span> <span class="s">"Maputo"</span><span class="o">);</span>
+<span class="n">String</span> <span class="n">key</span> <span class="o">=</span> <span class="n">usersRef</span><span class="o">.</span><span class="na">push</span><span class="o">().</span><span class="na">getKey</span><span class="o">();</span>
+<span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="n">key</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span><span class="n">newUser</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Note that this generates a random key (like “-JhQ76OEK_848CkIFhAq” for example). Learn about how these keys are
+ generated <a href="https://firebase.googleblog.com/2015/02/the-2120-ways-to-ensure-unique_68.html">here</a>.</p>
+
+<h2 id="read">Read</h2>
+<p>This is the part where it gets tricky. That’s because in SQL development, the data structure is independent from the
+views. Which means you can design your view not worrying about how the database is structured and vice-versa.</p>
+
+<p>Now in the Realtime Database, things don’t work that way. Yo need to <strong>STRUCTURE YOUR DATA AFTER YOUR VIEW</strong>. This
+ means that your structure may vary depending on how you want to display your data. That’s why we have a few
+  different examples bellow.</p>
+
+<p>You should also know that in order to read data, Firebase makes use of Listeners. Check the
+ Firebase Documentation to know more about the different listeners and the difference between
+ <a href="https://firebase.google.com/docs/database/android/read-and-write#listen_for_value_events">Value Event Listeners</a> and
+ <a href="https://firebase.google.com/docs/database/android/lists-of-data#child-events">Child Event Listeners</a>
+ to know more about it. Please note that some examples in this guide might omit the listener.</p>
+
+<p>Finally, refer to <a href="https://firebase.google.com/docs/database/android/lists-of-data#sorting_and_filtering_data">Sorting and Filtering Data</a>
+ to understand our examples about querying, sorting and filtering data on the Realtime Database.</p>
+
+<h3 id="read-all-users">Read all users</h3>
+<p>Please note that this is <strong>not recommended</strong>, because if this node contains a large number of users,
+ it might use a lot of bandwidth, memory and battery.</p>
+
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">addValueEventListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueEventListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDataChange</span><span class="o">(</span><span class="n">DataSnapshot</span> <span class="n">dataSnapshot</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Here, dataSnapshot contains all the users.</span>
+        <span class="c1">// We can then iterate through it to get each one of them</span>
+        <span class="c1">// and maybe add them to a Collection like List or ArrayList</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">DataSnapshot</span> <span class="n">snap</span> <span class="o">:</span> <span class="n">dataSnapshot</span><span class="o">.</span><span class="na">getChildren</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="na">getValue</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+            <span class="c1">// ...</span>
+        <span class="o">}</span>
+        
+    <span class="o">}</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCancelled</span><span class="o">(</span><span class="n">DatabaseError</span> <span class="n">databaseError</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Getting Users failed, log a message</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">w</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="n">databaseError</span><span class="o">.</span><span class="na">toException</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div></div>
+
+<h3 id="read-a-single-user">Read a single user</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><strong>Firebase:</strong></p>
+
+<p>If you know the user’s key, you can call use the <code class="highlighter-rouge">child()</code> method:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="s">"-JhQ76OEK_848CkIFhAq"</span><span class="o">).</span><span class="na">addValueEventListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueEventListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDataChange</span><span class="o">(</span><span class="n">DataSnapshot</span> <span class="n">dataSnapshot</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Here, dataSnapshot contains only the user we have specified,</span>
+        <span class="c1">// thus there's no need to iterate anything</span>
+        <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="na">getValue</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        
+    <span class="o">}</span>
+    
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCancelled</span><span class="o">(</span><span class="n">DatabaseError</span> <span class="n">databaseError</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Getting User failed, log a message</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">w</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="n">databaseError</span><span class="o">.</span><span class="na">toException</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre></div></div>
+
+<h3 id="find-a-user-by-email">Find a user by email</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">email</span> <span class="o">=</span> <span class="nv">"joana@email.com"</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"email"</span><span class="o">).</span><span class="na">equalTo</span><span class="o">(</span><span class="s">"joana@email.com"</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Please note that while this was supposed to return a single user, it actually
+ returns a list containing 1 user, thus you’ll need to either iterate through the
+ DataSnapshot or get the user at index 0 from the list.</p>
+
+<h3 id="read-5-users-from-a-specific-city">Read 5 users from a specific city</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">city</span> <span class="o">=</span> <span class="nv">"Maputo"</span> <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+
+<p>Limit to the first 5 results:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"city"</span><span class="o">).</span><span class="na">equalTo</span><span class="o">(</span><span class="s">"Maputo"</span><span class="o">).</span><span class="na">limitToFirst</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Limit to the last 5 results:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"city"</span><span class="o">).</span><span class="na">equalTo</span><span class="o">(</span><span class="s">"Maputo"</span><span class="o">).</span><span class="na">limitToLast</span><span class="o">(</span><span class="mi">5</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="find-users-who-are-not-older-than-18-years">Find users who are not older than 18 years</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">age</span> <span class="o">&lt;</span> <span class="mi">18</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"age"</span><span class="o">).</span><span class="na">endAt</span><span class="o">(</span><span class="mi">17</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>The example above finds the users who’s age is <strong>less than</strong> 18. If you’d like to find the
+ users who’s age is <strong>greater than or equal to</strong> 18, you’d use:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"age"</span><span class="o">).</span><span class="na">startAt</span><span class="o">(</span><span class="mi">18</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="find-users-who-are-between-30-and-60-years-old">Find users who are between 30 and 60 years old</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">30</span> <span class="k">AND</span> <span class="n">age</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"age"</span><span class="o">).</span><span class="na">startAt</span><span class="o">(</span><span class="mi">30</span><span class="o">).</span><span class="na">endAt</span><span class="o">(</span><span class="mi">60</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h3 id="find-users-who-are-21-years-old-and-live-in-a-specific-city">Find users who are 21 years old and live in a specific city</h3>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">21</span> <span class="k">AND</span> <span class="n">city</span> <span class="o">=</span> <span class="nv">"Maputo"</span><span class="p">;</span>
+</code></pre></div></div>
+<p><strong>Firebase:</strong></p>
+
+<p>After seeing the previous queries, you might think this can be done by putting
+ together <code class="highlighter-rouge">orderByChild("city")</code> and <code class="highlighter-rouge">orderByChild("age")</code>. Sorry to disappoint you,
+ but the Realtime Database does not let you chain <code class="highlighter-rouge">orderByChild()</code> methods.</p>
+
+<p>As a workaround, you can add a new attribute to the database (and a new property to the <code class="highlighter-rouge">User</code> class),
+ let’s say <code class="highlighter-rouge">age_city</code>. Then it’s value would be composed by “[age]_[city]” (e.g. “19_Maputo” or “30_Beira”).
+ So than we can run the query:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">orderByChild</span><span class="o">(</span><span class="s">"age_city"</span><span class="o">).</span><span class="na">equalTo</span><span class="o">(</span><span class="s">"21_Maputo"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<!-- TODO LIKE Operations and JOINs -->
+
+<!--
+**SQL:**
+```sql
+
+```
+**Firebase:**
+```java
+
+```
+-->
+
+<h2 id="update">Update</h2>
+<p>Changing the user’s name from “Joana” to “John”:</p>
+
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">UPDATE</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="k">SET</span> <span class="n">fullname</span> <span class="o">=</span> <span class="s1">'John'</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><strong>Firebase:</strong></p>
+
+<p>You can either overwrite the previous name:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">child</span><span class="o">(</span><span class="s">"fullname"</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span><span class="s">"John"</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Or update the object and overwrite it:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">newUser</span><span class="o">.</span><span class="na">setFullname</span><span class="o">(</span><span class="s">"John"</span><span class="o">);</span>
+<span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span><span class="n">newUser</span><span class="o">);</span>
+</code></pre></div></div>
+
+<h2 id="delete">Delete</h2>
+<p><strong>SQL:</strong></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><strong>Firebase:</strong></p>
+
+<p>Either overwrite the object with <code class="highlighter-rouge">null</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">setValue</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+</code></pre></div></div>
+<p>Or call <code class="highlighter-rouge">removeValue()</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">usersRef</span><span class="o">.</span><span class="na">child</span><span class="o">(</span><span class="mi">2</span><span class="o">).</span><span class="na">removeValue</span><span class="o">();</span>
+</code></pre></div></div>
+
+          </div>
+        </div>
+        <footer class="demo-footer mdl-mini-footer">
+          <div class="mdl-mini-footer--left-section">
+            <ul class="mdl-mini-footer--link-list">
+              <li><a href="#">Help</a></li>
+              <li><a href="#">Privacy and Terms</a></li>
+              <li><a href="#">User Agreement</a></li>
+            </ul>
+          </div>
+        </footer>
+      </main>
+    </div>
+    <a href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/article/" target="_blank" id="view-source" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--accent mdl-color-text--accent-contrast">View Source</a>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  </body>
+</html>
